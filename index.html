@@ -54,16 +54,22 @@
         affichage();
       });
 
+      //Réception de l'arrivée d'un nouveau participant
       socket.on('broadcast', function(message) {
         logChat.unshift(message);
         affichage();
       });
 
+      //Réception d'un nouveau message
       socket.on('messageBroadcast', function(pseudo, message) {
         logChat.unshift([pseudo, message]);
         affichage();
       });
 
+      //Récupération d'un pseudo anonyme généré par le serveur
+      socket.on('anonUser', function(anon) {
+        pseudo= anon;
+      });
 
     </script>
   </body>
