@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "placeholder"
+    "url": "https://github.com/Ayss83/chat-socket-io.git"
   },
   "author": "Renaud",
   "license": "ISC"
