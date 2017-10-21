@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>Super chat</h1>
+
+    <form action="/" method="post">
+      <input type="text" id="saisie" name="saisie" value="" placeholder="Votre message...">
+      <button type="button" id="envoi" name="button">Envoyer</button>
+    </form>
+    <div id="tchat">
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+    <script src="socket.io/socket.io.js" charset="utf-8"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://localhost:8081');
+
+    var affichage = function() {
+      $('#tchat').text('');
+      logChat.forEach(function(element) {
+        if(element.length == 1)
+        {
+          $("#tchat").append("<em>"+element+"</em><br>");
+        }
+        else
+        {
+          $("#tchat").append("<strong>" + element[0] + "</strong> " + element[1] + "<br>");
+        }
+      });
+      $("#saisie").focus();
+    }
+
+      //lors de la connexion, création de la table devant recevoir les messages
+      if(typeof(logChat)=='undefined') {
+        logChat = [];
+      }
+
+      var pseudo = prompt('Quel est votre pseudo?');
+      socket.emit('nouveau', pseudo);
+
+      $("#envoi").click(function() {
+        var message = $("#saisie").val();
+        socket.emit('newMessage', pseudo, message);
+        logChat.unshift([pseudo, message]);
+
+        $("#saisie").val("");
+        affichage();
+      });
+
+      socket.on('broadcast', function(message) {
+        logChat.unshift(message);
+        affichage();
+      });
+
+      socket.on('messageBroadcast', function(pseudo, message) {
+        logChat.unshift([pseudo, message]);
+        affichage();
+      });
+
+
+    </script>
+  </body>
+</html>
