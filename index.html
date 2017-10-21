@@ -3,16 +3,32 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+
+    <style media="screen">
+      #tchat{
+        width: 95%;
+        height: 515px;
+        overflow-y: scroll;
+        padding: 5px;
+      }
+    </style>
+
   </head>
   <body>
-    <h1>Super chat</h1>
+    <div class="container-fluid">
+      <h1>Chat app</h1>
 
-    <form action="/" method="post">
-      <input type="text" id="saisie" name="saisie" value="" placeholder="Votre message...">
-      <button type="button" id="envoi" name="button">Envoyer</button>
-    </form>
-    <div id="tchat">
+      <form class="col-6" action="/" method="post">
+        <div class="input-group">
+          <input class="form-control" type="text" id="saisie" name="saisie" value="" placeholder="Votre message...">
+          <button class="btn input-group-addon" type="button" id="envoi" name="button">Envoyer</button>
+        </div>
+      </form>
+      <br>
+      <div id="tchat" class="table-bordered table-striped">
 
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -45,13 +61,19 @@
       var pseudo = prompt('Quel est votre pseudo?');
       socket.emit('nouveau', pseudo);
 
+
       $("#envoi").click(function() {
         var message = $("#saisie").val();
-        socket.emit('newMessage', pseudo, message);
-        logChat.unshift([pseudo, message]);
+        //Si l'utilisateur a saisi du texte dans l'input, envoie le message au serveur
+        //l'ajoute à la table des message et vide le champs de saisie puis appelle la
+        //méthode affichage
+        if(message != "") {
+          socket.emit('newMessage', pseudo, message);
+          logChat.unshift([pseudo, message]);
 
-        $("#saisie").val("");
-        affichage();
+          $("#saisie").val("");
+          affichage();
+        }
       });
 
       //Réception de l'arrivée d'un nouveau participant

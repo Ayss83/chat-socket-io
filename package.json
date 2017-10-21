@@ -1,6 +1,6 @@
 {
   "name": "tchat",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "application de tchat en temps réel avec nodeJS et socket.io",
   "main": "app.js",
   "dependencies": {
