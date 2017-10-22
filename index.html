@@ -17,9 +17,9 @@
   </head>
   <body>
     <div class="container-fluid">
-      <h1>Chat app</h1>
+      <h1>Snapchat without Snap</h1>
 
-      <form class="col-6" action="/" method="post">
+      <form id="formSaisie" class="col-6" action="/" method="post">
         <div class="input-group">
           <input class="form-control" type="text" id="saisie" name="saisie" value="" placeholder="Votre message...">
           <button class="btn input-group-addon" type="button" id="envoi" name="button">Envoyer</button>
@@ -36,33 +36,34 @@
     crossorigin="anonymous"></script>
     <script src="socket.io/socket.io.js" charset="utf-8"></script>
     <script type="text/javascript">
-    var socket = io.connect('http://localhost:8081');
+      var socket = io.connect('http://localhost:8081');
 
-    var affichage = function() {
-      $('#tchat').text('');
-      logChat.forEach(function(element) {
-        if(element.length == 1)
-        {
-          $("#tchat").append("<em>"+element+"</em><br>");
-        }
-        else
-        {
-          $("#tchat").append("<strong>" + element[0] + "</strong> " + element[1] + "<br>");
-        }
-      });
       $("#saisie").focus();
-    }
 
-      //lors de la connexion, création de la table devant recevoir les messages
-      if(typeof(logChat)=='undefined') {
-        logChat = [];
+      //Méthode d'affichage des messages dans le div prévu
+      var affichage = function() {
+        //effacement des textes déjà présents dans le div
+        $('#tchat').text('');
+        //boucle de parcours de la table contenant les messages
+        logChat.forEach(function(element) {
+          //Si l'élément ne comporte qu'une valeur, il s'agit d'un message de connexion
+          //d'un nouveau participant, on l'affiche en italique
+          if(element.length == 1)
+          {
+            $("#tchat").append("<em>"+element+"</em><br>");
+          }
+          //Sinon il s'agit d'un message, on affiche le pseudo en gras et le message normalement
+          else
+          {
+            $("#tchat").append("<strong>" + element[0] + "</strong> " + element[1] + "<br>");
+          }
+        });
+        //remise du focus sur le champs de saisie
+        $("#saisie").focus();
       }
 
-      var pseudo = prompt('Quel est votre pseudo?');
-      socket.emit('nouveau', pseudo);
-
-
-      $("#envoi").click(function() {
+      //méthode d'emission de message
+      var envoyer = function() {
         var message = $("#saisie").val();
         //Si l'utilisateur a saisi du texte dans l'input, envoie le message au serveur
         //l'ajoute à la table des message et vide le champs de saisie puis appelle la
@@ -74,6 +75,27 @@
           $("#saisie").val("");
           affichage();
         }
+      }
+
+      //lors de la connexion, création de la table devant recevoir les messages
+      if(typeof(logChat)=='undefined') {
+        logChat = [];
+      }
+
+      //Demande de saisie du pseudo lors du chargement de la page
+      var pseudo = prompt('Quel est votre pseudo?');
+      //Envoi du pseudo au serveur
+      socket.emit('nouveau', pseudo);
+
+      //eventHandler de la soumission du form
+      $("#formSaisie").submit(function() {
+        envoyer();
+        return false;
+      });
+
+      //eventHandler du clic sur le bouton envoyer
+      $("#envoi").click(function() {
+        envoyer();
       });
 
       //Réception de l'arrivée d'un nouveau participant
